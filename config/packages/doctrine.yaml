@@ -1,0 +1,64 @@
+doctrine:
+    dbal:
+        default_connection: grenoble
+        # Définition de toutes les connections aux bases de données des 11 agences
+        # Grenoble est la connection par éfaut et l'URL se trouve dans le fichier .env
+        connections:
+            bordeaux:
+                url: '%env(resolve:DATABASE_BORDEAUX_URL)%'
+            grenoble:
+                url: '%env(resolve:DATABASE_GRENOBLE_URL)%'
+            group:
+                url: '%env(resolve:DATABASE_GROUP_URL)%'
+            lyon:
+                url: '%env(resolve:DATABASE_LYON_URL)%'
+            montpellier:
+                url: '%env(resolve:DATABASE_MONTPELLIER_URL)%'
+            parisnord:
+                url: '%env(resolve:DATABASE_PARIS_NORD_URL)%'
+            portland:
+                url: '%env(resolve:DATABASE_PORTLAND_URL)%'
+            smp:
+                url: '%env(resolve:DATABASE_SMP_URL)%'
+            sogefi:
+                url: '%env(resolve:DATABASE_SOGEFI_URL)%'
+            stetienne:
+                url: '%env(resolve:DATABASE_ST_ETIENNE_URL)%'
+            toulouse:
+                url: '%env(resolve:DATABASE_TOULOUSE_URL)%'
+
+    orm:
+        auto_generate_proxy_classes: true
+        naming_strategy: doctrine.orm.naming_strategy.underscore_number_aware
+        auto_mapping: true
+        mappings:
+            App:
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Entity'
+                prefix: 'App\Entity'
+                alias: App
+
+when@test:
+    doctrine:
+        dbal:
+            # "TEST_TOKEN" is typically set by ParaTest
+            dbname_suffix: '_test%env(default::TEST_TOKEN)%'
+
+when@prod:
+    doctrine:
+        orm:
+            auto_generate_proxy_classes: false
+            query_cache_driver:
+                type: pool
+                pool: doctrine.system_cache_pool
+            result_cache_driver:
+                type: pool
+                pool: doctrine.result_cache_pool
+
+    framework:
+        cache:
+            pools:
+                doctrine.result_cache_pool:
+                    adapter: cache.app
+                doctrine.system_cache_pool:
+                    adapter: cache.system
